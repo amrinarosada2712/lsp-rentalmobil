@@ -61,29 +61,41 @@
         }
 
         // Jika tombol "Pesan" ditekan, tampilkan alert dan redirect
-    if (isset($_POST['simpan'])) {
-        $diskon = ($durasi >= 3) ? 0.1 * $total_harga_mobil : 0;
-        $check = $supir == "checked" ? 'Ya' : 'Tidak';
-        $nama = $_POST['nama'];
-        $identitas = $_POST['identitas'];
-        $gender = $_POST['gender'];
-        $car = $_POST['car'] ;
-        $detail_pesanan = "Pesanan Berhasil!\n\n"
-            . "Nama: $nama\n"
-            . "Nomor Identitas: $identitas\n"
-            . "Jenis Kelamin: $gender\n"
-            . "Jenis Mobil: $car \n"
-            . "Supir: $check\n" 
-            . "Durasi:$durasi \n"
-            . "Diskon: $diskon  \n"
-            . "Total Bayar: Rp " . number_format($total_bayar, 0, ',', '.');
-
-        echo "<script>
-            alert(`$detail_pesanan`);
-            window.location.href = 'index.php';
-        </script>";
-        exit();
-    }
+        if (isset($_POST['simpan'])) { // Mengecek apakah tombol "Simpan" telah ditekan
+            $nama = $_POST['nama']; // Mengambil input nama dari form
+            $identitas = $_POST['identitas']; // Mengambil input nomor identitas dari form
+            $gender = $_POST['gender']; // Mengambil input jenis kelamin dari form
+            $car = $_POST['car']; // Mengambil input jenis mobil yang dipilih dari form
+            $check = $supir ? 'Ya' : 'Tidak'; // Mengecek apakah pengguna memilih opsi supir
+        
+            // Membuat array untuk menyimpan detail pesanan
+            $pesanan = [
+                "Nama" => $nama,
+                "Nomor Identitas" => $identitas,
+                "Jenis Kelamin" => $gender,
+                "Jenis Mobil" => $car,
+                "Supir" => $check,
+                "Durasi" => $durasi,
+                "Diskon" => $diskon,
+                "Total Bayar" => number_format($total_bayar, 0, ',', '.') // Format angka untuk tampilan lebih rapi
+            ];
+        
+            // Menyimpan pesanan ke dalam sesi agar data tetap tersimpan
+            $_SESSION['pesanan'][] = $pesanan;
+        
+            // Membuat string detail pesanan untuk ditampilkan dalam alert
+            $detail_pesanan = "Pesanan Berhasil!\n\n";
+            foreach ($pesanan as $key => $value) { // Looping untuk menyusun detail pesanan
+                $detail_pesanan .= "$key: $value\n"; // Menambahkan setiap item pesanan ke dalam string
+            }
+        
+            // Menampilkan alert dengan detail pesanan dan mengarahkan kembali ke halaman utama
+            echo "<script>
+                alert(`$detail_pesanan`);
+                window.location.href = 'index.php';
+            </script>";
+            exit(); // Menghentikan eksekusi kode setelah redirect
+        }
     }
 ?>
 
